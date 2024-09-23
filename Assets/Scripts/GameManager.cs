@@ -53,7 +53,7 @@ internal class GameManager : MonoBehaviour
         while (true && CheckingServer)
         {
             StartCoroutine(TimeVar.LoadTextFromServer("worldtimeapi.org/api/ip"));//получаем в разметку данные с сервера
-            yield return new WaitForSeconds(0.01f);//даем незаметный шанс на работу
+            yield return new WaitForSeconds(0.1f);//даем незаметный шанс на работу
             serverTime = TimeVar.GetNetworkTime();//получаем из структа время переведенное в локальный пояс
             instanceTime = instanceTime != serverTime ? serverTime : instanceTime; //корректируем по условию
             yield return new WaitForSeconds(CheckDelay);//задержка до следующей проверки

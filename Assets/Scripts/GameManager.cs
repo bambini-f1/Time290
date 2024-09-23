@@ -37,24 +37,22 @@ internal class GameManager : MonoBehaviour
     
     void Awake()
     {
-        //запускаем корутиы проверки и отсчета. В первом выполнении берем серверное время
-        StartClock(); //вынесено внизы
+        PreloadData();//сначала ждем гет с сервера
     }
 
-    private void Start() 
+    void Start() 
     {
+        //запускаем корутиы проверки и отсчета. В первом выполнении берем серверное время
+        StartCoroutine(StartClock()); //вынесено внизы
         //подписываем кнопки
         editorOnButton.onClick.AddListener(EditorOn);
         resetButton.onClick.AddListener(ResetTime);
     }
 
-    IEnumerator CheckServer()
+    IEnumerator CompareServer()
     {
         while (true && CheckingServer)
         {
-            StartCoroutine(TimeVar.LoadTextFromServer("worldtimeapi.org/api/ip"));//получаем в разметку данные с сервера
-            yield return new WaitForSeconds(0.1f);//даем незаметный шанс на работу
-            serverTime = TimeVar.GetNetworkTime();//получаем из структа время переведенное в локальный пояс
             instanceTime = instanceTime != serverTime ? serverTime : instanceTime; //корректируем по условию
             yield return new WaitForSeconds(CheckDelay);//задержка до следующей проверки
         }
@@ -74,6 +72,7 @@ internal class GameManager : MonoBehaviour
     void EditorOn(){
         UI.EditorEnabled(hourField, minuteField, secField, editorOnButton);//добавляем поля для ввода и меняем баннер
         StopAllCoroutines();//останавливаем корутины
+        TimeVar.getTimeDone = false;
         editorOnButton.onClick.RemoveListener(EditorOn);
         editorOnButton.onClick.AddListener(SubmitEditor);//меняем подписку кнопки
     }
@@ -83,19 +82,32 @@ internal class GameManager : MonoBehaviour
         StartCoroutine(PlayTime());//запускаем новый отсчет
         CheckingServer = false;//защищаем от случайно корутины
         UI.ResetBehaviour(resetButton,true);//включаем кнопку сброса
+        UI.ClearInputField(hourField, minuteField, secField);//чистим для повторонго ввода
         editorOnButton.onClick.RemoveListener(SubmitEditor);
         editorOnButton.onClick.AddListener(EditorOn);//возвращаем стратовую подписку
     }
 
     void ResetTime(){
         StopAllCoroutines();//останавливаем все
+        PreloadData();
         UI.ResetBehaviour(resetButton,false);//выключаем кнопку сброса
-        StartClock();//снова запускаем часы
+        StartCoroutine(StartClock());//снова запускаем часы
     }
 
-    void StartClock(){
+    IEnumerator StartClock(){
+        while (!TimeVar.getTimeDone)//пока нет времени, нет старта
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
         CheckingServer = true;//снимаем буль
-        StartCoroutine(CheckServer());//запускаем корутины
+        serverTime = TimeVar.serverTime;
+        StartCoroutine(CompareServer());//запускаем корутины
         StartCoroutine(PlayTime());
+        StopCoroutine(StartClock());
+        yield return null; //сделали
+    }
+
+    void PreloadData(){
+        StartCoroutine(TimeVar.LoadTimeFromServer("worldtimeapi.org/api/ip"));//получаем в разметку данные с сервера
     }
 }

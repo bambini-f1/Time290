@@ -5,17 +5,11 @@ using UnityEngine.Networking;
     
     internal struct TimeVar
     {
+        internal static bool getTimeDone = false; //детекс окончания корутины
+        internal static DateTime serverTime; //общественный дейт
         static string rawString;//жисон светится тут и там, вынесли на уровень повыше
-        internal static DateTime GetNetworkTime()
-        {
-            rawData currentData;//локальный кеш
-            currentData = JsonUtility.FromJson<rawData>(rawString);//десер сюда
-            DateTime parsedDate = DateTime.Parse(currentData.datetime);//парсим нужную строку
-            DateTime currentTime = parsedDate;//присваем отдельно
-            return currentTime; //вернули
-        }
 
-        internal static IEnumerator LoadTextFromServer(string url)
+        internal static IEnumerator LoadTimeFromServer(string url)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);//гет сайту
             yield return request.SendWebRequest();//работаем
@@ -28,7 +22,16 @@ using UnityEngine.Networking;
                 Debug.LogErrorFormat("error request [{0}, {1}]", url, request.error);
                 rawString = null;//ошибка - не пишем текст
             }
+            serverTime = GetTimeJson();//взяли из разметки время
+            getTimeDone = true;//получили буль
             request.Dispose();//чистимся
+        }
+        internal static DateTime GetTimeJson()
+        {
+            rawData currentData;//локальный кеш
+            currentData = JsonUtility.FromJson<rawData>(rawString);//десер сюда
+            DateTime currentTime = DateTime.Parse(currentData.datetime);//парсим нужную строку
+            return currentTime; //вернули
         }
     }
 

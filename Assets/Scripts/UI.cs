@@ -14,8 +14,8 @@ internal struct UI
     }
 
     internal static DateTime SubmitValue(DateTime instanceTime, InputField hour, InputField minute, InputField second, Button button){
-        DateTime subminTime = new DateTime(instanceTime.Year,instanceTime.Month,instanceTime.Day,Math.Clamp(System.Convert.ToInt32(hour.text),0,23),Math.Clamp(System.Convert.ToInt32(minute.text),0,59),Math.Clamp(System.Convert.ToInt32(second.text),0,59));
-        instanceTime = subminTime;
+        DateTime submitTime = new DateTime(instanceTime.Year,instanceTime.Month,instanceTime.Day,Math.Clamp(System.Convert.ToInt32(hour.text),0,23),Math.Clamp(System.Convert.ToInt32(minute.text),0,59),Math.Clamp(System.Convert.ToInt32(second.text),0,59));
+        instanceTime = submitTime;
         ChangeClock(hour,minute,second,button,false,"Get your time!");
         return instanceTime;
     }
@@ -29,6 +29,13 @@ internal struct UI
 
     internal static void ResetBehaviour(Button button, bool state){
         button.transform.gameObject.SetActive(state);
+    }
+
+    internal static void ClearInputField(InputField hour, InputField minute, InputField second){
+        //очищаем текст в полях. Можно и циклом было
+        hour.text = null;
+        minute.text = null;
+        second.text = null;
     }
     
 }

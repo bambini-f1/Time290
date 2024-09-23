@@ -1,33 +1,53 @@
 using System;
-using System.Net.Sockets;
-using System.Net;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.Networking;
     
     internal struct TimeVar
     {
+        static string rawString;//жисон светится тут и там, вынесли на уровень повыше
         internal static DateTime GetNetworkTime()
         {
-            const string ntpServer = "time.windows.com";
-            byte[] ntpData = new byte[48];
-            ntpData[0] = 0x1B;
-
-            IPAddress[] addresses = Dns.GetHostEntry(ntpServer).AddressList;
-            IPEndPoint ipEndPoint = new(addresses[0], 123);
-
-            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
-            {
-                socket.Connect(ipEndPoint);
-                socket.Send(ntpData);
-                socket.Receive(ntpData);
-                socket.Close();
-            }
-
-            ulong intPart = ((ulong)ntpData[40] << 24) | (ulong)ntpData[41] << 16 | (ulong)ntpData[42] << 8 | ntpData[43];
-            ulong fractPart = ((ulong)ntpData[44] << 24) | (ulong)ntpData[45] << 16 | (ulong)ntpData[46] << 8 | ntpData[47];
-
-            ulong milliseconds = (intPart * 1000) + (fractPart * 1000 / 0x100000000L);
-            DateTime networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
-
-            return networkDateTime.ToLocalTime();
+            rawData currentData;//локальный кеш
+            currentData = JsonUtility.FromJson<rawData>(rawString);//десер сюда
+            DateTime parsedDate = DateTime.Parse(currentData.datetime);//парсим нужную строку
+            DateTime currentTime = parsedDate;//присваем отдельно
+            return currentTime; //вернули
         }
-    } 
+
+        internal static IEnumerator LoadTextFromServer(string url)
+        {
+            UnityWebRequest request = UnityWebRequest.Get(url);//гет сайту
+            yield return request.SendWebRequest();//работаем
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                rawString = request.downloadHandler.text;//успех? пишем текст
+            }
+            else
+            {
+                Debug.LogErrorFormat("error request [{0}, {1}]", url, request.error);
+                rawString = null;//ошибка - не пишем текст
+            }
+            request.Dispose();//чистимся
+        }
+    }
+
+    [Serializable]//разметка даты
+    public struct rawData{
+        public string utc_offset;
+        public string timezone;
+        public string day_of_week;
+        public string day_of_year;
+        public string datetime;
+        public string utc_datetime;
+        public string unixtime;
+        public string raw_offset;
+        public string week_number;
+        public string dst;
+        public string abbreviation;
+        public string dst_offset;
+        public string dst_from;
+        public string dst_until;
+        public string client_ip;
+    }
 

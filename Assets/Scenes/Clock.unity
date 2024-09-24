@@ -259,7 +259,7 @@ MonoBehaviour:
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
-    m_RichText: 0
+    m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
@@ -751,13 +751,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 908794724}
   m_TextComponent: {fileID: 1618284127}
   m_Placeholder: {fileID: 1697051803}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 2
   m_OnSubmit:
     m_PersistentCalls:
@@ -1322,13 +1322,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1432203459}
   m_TextComponent: {fileID: 181526780}
   m_Placeholder: {fileID: 1592899043}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 2
   m_OnSubmit:
     m_PersistentCalls:
@@ -1549,13 +1549,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1489329044}
   m_TextComponent: {fileID: 1953921196}
   m_Placeholder: {fileID: 629593270}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 2
   m_OnSubmit:
     m_PersistentCalls:
@@ -1757,7 +1757,7 @@ MonoBehaviour:
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
-    m_RichText: 0
+    m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
@@ -2393,7 +2393,7 @@ MonoBehaviour:
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
-    m_RichText: 0
+    m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1

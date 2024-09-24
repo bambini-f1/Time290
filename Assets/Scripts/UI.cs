@@ -16,7 +16,7 @@ internal struct UI
     internal static DateTime SubmitValue(DateTime instanceTime, InputField hour, InputField minute, InputField second, Button button){
         DateTime submitTime = new DateTime(instanceTime.Year,instanceTime.Month,instanceTime.Day,Math.Clamp(System.Convert.ToInt32(hour.text),0,23),Math.Clamp(System.Convert.ToInt32(minute.text),0,59),Math.Clamp(System.Convert.ToInt32(second.text),0,59));
         instanceTime = submitTime;
-        ChangeClock(hour,minute,second,button,false,"Get your time!");
+        ChangeClock(hour,minute,second,button,false,"Set your time!");
         return instanceTime;
     }
 

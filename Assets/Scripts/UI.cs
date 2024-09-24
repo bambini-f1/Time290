@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine.UI;
 
 internal struct UI
@@ -13,10 +14,16 @@ internal struct UI
         ChangeClock(hour,minute,second,button,true,"Enter & submit");
     }
 
-    internal static DateTime SubmitValue(DateTime instanceTime, InputField hour, InputField minute, InputField second, Button button){
-        DateTime submitTime = new DateTime(instanceTime.Year,instanceTime.Month,instanceTime.Day,Math.Clamp(System.Convert.ToInt32(hour.text),0,23),Math.Clamp(System.Convert.ToInt32(minute.text),0,59),Math.Clamp(System.Convert.ToInt32(second.text),0,59));
-        instanceTime = submitTime;
-        ChangeClock(hour,minute,second,button,false,"Set your time!");
+    internal static DateTime SubmitValue(DateTime instanceTime, InputField hourField, InputField minuteField, InputField secondField, Button button){
+        int year = instanceTime.Year;
+        int month = instanceTime.Month;
+        int day = instanceTime.Day;
+        int hour = hourField.text.NullIfEmpty() == null? instanceTime.Hour : Math.Clamp(Convert.ToInt32(hourField.text),0,23);
+        int minute = minuteField.text.NullIfEmpty() == null ? instanceTime.Minute : Math.Clamp(Convert.ToInt32(minuteField.text),0,59);
+        int second = secondField.text.NullIfEmpty() == null ? instanceTime.Second : Math.Clamp(Convert.ToInt32(secondField.text),0,59);
+        DateTime ?submitTime = new DateTime(year, month, day, hour, minute, second);
+        instanceTime = (DateTime)submitTime;
+        ChangeClock(hourField,minuteField,secondField,button,false,"Set your time!");
         return instanceTime;
     }
 

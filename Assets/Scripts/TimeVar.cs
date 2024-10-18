@@ -8,6 +8,7 @@ using UnityEngine.Networking;
         internal static bool getTimeDone = false; //детекс окончания корутины
         internal static DateTime serverTime; //общественный дейт
         static string rawString;//жисон светится тут и там, вынесли на уровень повыше
+        internal static rawData currentData;//локальный кеш
 
         internal static IEnumerator LoadTimeFromServer(string url)
         {
@@ -26,9 +27,9 @@ using UnityEngine.Networking;
             getTimeDone = true;//получили буль
             request.Dispose();//чистимся
         }
-        internal static DateTime GetTimeJson()
+
+        static DateTime GetTimeJson()
         {
-            rawData currentData;//локальный кеш
             currentData = JsonUtility.FromJson<rawData>(rawString);//десер сюда
             DateTime currentTime = DateTime.Parse(currentData.datetime);//парсим нужную строку
             return currentTime; //вернули

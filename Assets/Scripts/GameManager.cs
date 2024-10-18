@@ -17,6 +17,8 @@ internal class GameManager : MonoBehaviour
     Text hourText; 
     [SerializeField]
     Text minuteText, secText;//ссылки на текст часов
+    [SerializeField]
+    Text utcZone, timeZone, dayofyear, dayofweek;
 
     [Header("Editor field")]
     [SerializeField]
@@ -49,11 +51,15 @@ internal class GameManager : MonoBehaviour
         resetButton.onClick.AddListener(ResetTime);
     }
 
-    IEnumerator CompareServer()
+    IEnumerator CompareServerSetInfo()
     {
         while (true && CheckingServer)
         {
             instanceTime = instanceTime != serverTime ? serverTime : instanceTime; //корректируем по условию
+            utcZone.text = TimeVar.currentData.utc_offset;
+            timeZone.text = TimeVar.currentData.timezone;
+            dayofweek.text = instanceTime.DayOfWeek.ToString();
+            dayofyear.text = instanceTime.DayOfYear.ToString();
             yield return new WaitForSeconds(CheckDelay);//задержка до следующей проверки
         }
     }
@@ -101,7 +107,7 @@ internal class GameManager : MonoBehaviour
         }
         CheckingServer = true;//снимаем буль
         serverTime = TimeVar.serverTime;
-        StartCoroutine(CompareServer());//запускаем корутины
+        StartCoroutine(CompareServerSetInfo());//запускаем корутины
         StartCoroutine(PlayTime());
         StopCoroutine(StartClock());
         yield return null; //сделали

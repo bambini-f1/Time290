@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-internal class GameManager : MonoBehaviour
+internal class Observer : MonoBehaviour
 {
     DateTime serverTime, instanceTime;//серверное и наше время 
     #region InspectorFields
@@ -18,7 +18,7 @@ internal class GameManager : MonoBehaviour
     [SerializeField]
     Text minuteText, secText;//ссылки на текст часов
     [SerializeField]
-    Text utcZone, timeZone, dayofyear, dayofweek;
+    Text utcZone, timeZone, timerRefreshField;//ссылки на инфо-поля
 
     [Header("Editor field")]
     [SerializeField]
@@ -29,9 +29,18 @@ internal class GameManager : MonoBehaviour
     [Header("Others")]
     [SerializeField]
     float CheckDelay = 3600f;//доступна для инспектора, если нужны проверки чаще
+    [SerializeField]
+    int timerRefresh = 60;
+    [SerializeField]
+    string webTarget = "worldtimeapi.org/api/ip";
 
     [SerializeField]
-    Button editorOnButton, resetButton;//кнопка редактора и сброса
+    Button editorOnButton, resetButton, errorButton;//кнопка редактора и сброса
+
+    [SerializeField]
+    GameObject[] objectsForClose;
+     [SerializeField]
+    GameObject refreshWindow;
 
     [SerializeField]
     bool CheckingServer = true;//базово сверяем время (оттуда же и берем стратовое значение)
@@ -49,6 +58,8 @@ internal class GameManager : MonoBehaviour
         //подписываем кнопки
         editorOnButton.onClick.AddListener(EditorOn);
         resetButton.onClick.AddListener(ResetTime);
+        errorButton.onClick.AddListener(ErrorReset);
+
     }
 
     IEnumerator CompareServerSetInfo()
@@ -58,8 +69,6 @@ internal class GameManager : MonoBehaviour
             instanceTime = instanceTime != serverTime ? serverTime : instanceTime; //корректируем по условию
             utcZone.text = TimeVar.currentData.utc_offset;
             timeZone.text = TimeVar.currentData.timezone;
-            dayofweek.text = instanceTime.DayOfWeek.ToString();
-            dayofyear.text = instanceTime.DayOfYear.ToString();
             yield return new WaitForSeconds(CheckDelay);//задержка до следующей проверки
         }
     }
@@ -114,6 +123,11 @@ internal class GameManager : MonoBehaviour
     }
 
     void PreloadData(){
-        StartCoroutine(TimeVar.LoadTimeFromServer("worldtimeapi.org/api/ip"));//получаем в разметку данные с сервера
+        StartCoroutine(TimeVar.LoadTimeFromServer(webTarget, objectsForClose, refreshWindow));//получаем в разметку данные с сервера
+    }
+
+    void ErrorReset(){
+        ResetTime();
+        StartCoroutine(TimeVar.CooldownRefsresh(timerRefresh, timerRefreshField, errorButton));
     }
 }

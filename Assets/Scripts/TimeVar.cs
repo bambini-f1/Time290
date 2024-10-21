@@ -2,31 +2,54 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
     
     internal struct TimeVar
     {
-        internal static bool getTimeDone = false; //детекс окончания корутины
+        internal static bool getTimeDone; //детекс окончания корутины и подключения
         internal static DateTime serverTime; //общественный дейт
         static string rawString;//жисон светится тут и там, вынесли на уровень повыше
         internal static rawData currentData;//локальный кеш
 
-        internal static IEnumerator LoadTimeFromServer(string url)
+        internal static IEnumerator LoadTimeFromServer(string url, GameObject[] objectForClose, GameObject refreshWindow)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);//гет сайту
             yield return request.SendWebRequest();//работаем
             if (request.result == UnityWebRequest.Result.Success)
             {
                 rawString = request.downloadHandler.text;//успех? пишем текст
+                serverTime = GetTimeJson();//взяли из разметки время
+                getTimeDone = true;//получили буль
             }
             else
             {
                 Debug.LogErrorFormat("error request [{0}, {1}]", url, request.error);
                 rawString = null;//ошибка - не пишем текст
+                getTimeDone = false;
             }
-            serverTime = GetTimeJson();//взяли из разметки время
-            getTimeDone = true;//получили буль
+            ErrorBeh(getTimeDone, objectForClose, refreshWindow);
             request.Dispose();//чистимся
         }
+
+        internal static void ErrorBeh(bool state, GameObject[] objectsForClose, GameObject refreshWindow){
+                for (int i = 0; i < objectsForClose.Length; i++){
+                    objectsForClose[i].SetActive(state);
+                }
+                refreshWindow.SetActive(!state);
+                Debug.Log("Done");
+        }
+
+        internal static IEnumerator CooldownRefsresh(int timer, Text timerText, Button buttonForClose){
+        buttonForClose.interactable = false;
+        while (timer > 0){
+            timerText.text = $"in {timer} seconds";
+            --timer;
+            yield return new WaitForSeconds(1f);
+        }
+        buttonForClose.interactable = true;
+        timerText.text = $"maybe now?";
+        yield return null;
+    }
 
         static DateTime GetTimeJson()
         {

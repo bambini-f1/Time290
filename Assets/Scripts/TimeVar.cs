@@ -31,7 +31,7 @@ using UnityEngine.UI;
             request.Dispose();//чистимся
         }
 
-        internal static void ErrorBeh(bool state, GameObject[] objectsForClose, GameObject refreshWindow){
+        static void ErrorBeh(bool state, GameObject[] objectsForClose, GameObject refreshWindow){
                 for (int i = 0; i < objectsForClose.Length; i++){
                     objectsForClose[i].SetActive(state);
                 }

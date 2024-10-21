@@ -127,7 +127,7 @@ internal class Observer : MonoBehaviour
     }
 
     void ErrorReset(){
-        ResetTime();
+        ResetTime();//здесь мы объединяем логику из авейка и старта, поэтому просто ресета недостаточно
         StartCoroutine(TimeVar.CooldownRefsresh(timerRefresh, timerRefreshField, errorButton));
     }
 }
